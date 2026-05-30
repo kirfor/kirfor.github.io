@@ -9,19 +9,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>KIMPL1 — Вычисление замыкания ФЗ</h1>
+            <h1>ЗАМЫКАНИЕ СИСТЕМЫ ФУНКЦИОНАЛЬНЫХ ЗАВИСИМОСТЕЙ</h1>
             <p class="subtitle">Алгоритм замыкания на исходном множестве кубов (логических единиц) с правилами транзитивности и псевдотранзитивности</p>
         </div>
 
         <div class="toolbar">
             <button id="btnOpen" title="Открыть XML-файл (Ctrl+O)">📂 Открыть</button>
-            <button id="btnSaveAs" title="Сохранить как (Ctrl+Shift+S)" disabled>📄 Сохранить как...</button>
+            <button id="btnSaveAs" title="Сохранить результат (Ctrl+Shift+S)" disabled>💾 Сохранить</button>
             <button id="btnCalculate" title="Вычислить замыкание (Ctrl+R)" disabled>⚡ Рассчитать</button>
             <button id="btnQuit" title="Выход (Ctrl+Q)">🚪 Выход</button>
             <input type="file" id="fileInput" accept=".xml" style="display: none;">
         </div>
 
-        <!-- Информационная панель -->
         <div class="info-bar" id="infoBar">
             <span id="fileInfo">Файл: не загружен</span>
             <span id="attrInfo">Количество атрибутов: —</span>
@@ -42,7 +41,6 @@
             </div>
         </div>
 
-        <!-- Статусная строка внизу -->
         <div class="status-bar" id="statusBar">
             Готов. Выберите файл: Открыть
         </div>

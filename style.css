@@ -69,7 +69,6 @@ body {
     cursor: not-allowed;
 }
 
-/* Информационная панель */
 .info-bar {
     background: #e9ecef;
     padding: 10px 16px;
@@ -86,7 +85,6 @@ body {
     color: #495057;
 }
 
-/* Статусная строка */
 .status-bar {
     background: #e9ecef;
     padding: 8px 16px;
