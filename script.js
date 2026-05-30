@@ -511,13 +511,21 @@ async function saveAsFile() {
     
     const blob = new Blob([xmlContent], { type: 'application/xml' });
     
+    let suggestedName = 'fds.xml';
+    if (appState.currentFile) {
+        // Убираем расширение .xml (если есть) и добавляем .xml
+        let name = appState.currentFile.name.replace(/\.xml$/i, '');
+        suggestedName = name + '.xml';
+    }
+    
     try {
         const handle = await window.showSaveFilePicker({
-            suggestedName: appState.currentFile ? appState.currentFile.name : 'closure.xml',
+            suggestedName: suggestedName,
             types: [{
                 description: 'XML files',
                 accept: { 'application/xml': ['.xml'] }
-            }]
+            }],
+            excludeAcceptAllOption: true
         });
         const writable = await handle.createWritable();
         await writable.write(blob);
