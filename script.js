@@ -2,6 +2,10 @@
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
  * Версия 9-1 (с диалогом выбора папки при сохранении)
+ * 
+ * Сохранение: 
+ *   - Сохранить (Ctrl+S) -> имя_файла_closure.xml
+ *   - Сохранить как (Ctrl+Shift+S) -> исходное имя_файла.xml
  */
 
 // ============================================================
@@ -523,7 +527,9 @@ async function saveFile() {
         return;
     }
     
-    const fileName = appState.currentFile ? appState.currentFile.name.replace(/\.xml$/i, '_closure.xml') : 'closure.xml';
+    // Сохранить (Ctrl+S) -> имя_файла_closure.xml
+    const baseName = appState.currentFile ? appState.currentFile.name.replace(/\.xml$/i, '') : 'closure';
+    const suggestedName = `${baseName}_closure.xml`;
     const xmlContent = writeXmlResult(
         appState.originalKubList,
         appState.originalKc1,
@@ -531,7 +537,7 @@ async function saveFile() {
         appState.closureCubes.length,
         appState.originalN
     );
-    const saved = await saveToFile(fileName, xmlContent);
+    const saved = await saveToFile(suggestedName, xmlContent);
     if (saved) {
         appState.resultSaved = true;
         updateUI();
@@ -544,6 +550,8 @@ async function saveAsFile() {
         return;
     }
     
+    // Сохранить как (Ctrl+Shift+S) -> исходное имя файла
+    const suggestedName = appState.currentFile ? appState.currentFile.name : 'closure.xml';
     const xmlContent = writeXmlResult(
         appState.originalKubList,
         appState.originalKc1,
@@ -551,7 +559,7 @@ async function saveAsFile() {
         appState.closureCubes.length,
         appState.originalN
     );
-    const saved = await saveToFile('closure.xml', xmlContent);
+    const saved = await saveToFile(suggestedName, xmlContent);
     if (saved) {
         appState.resultSaved = true;
         updateUI();
