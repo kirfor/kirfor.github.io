@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-6 (исправлена: работают кнопки Открыть и Добавить ФЗ)
+ * Версия 9-7 (исправлена: кнопка Открыть работает)
  */
 
 // ============================================================
@@ -416,12 +416,12 @@ function renderEditableTable() {
         const bStr = cubeToStr(fd.cube, n);
         html += `<tr data-index="${i}">
             <td class="fd-number">${i + 1}</td>
-            <td class="fd-tm editable" contenteditable="true">${escapeHtml(tmStr)}</td>
-            <td class="fd-comment">${bStr}</td>
-        </tr>`;
+            <td class="fd-tm editable" contenteditable="true">${escapeHtml(tmStr)}<\/td>
+            <td class="fd-comment">${bStr}<\/td>
+        <\/tr>`;
     }
     
-    html += '</tbody></table>';
+    html += '</tbody>\/table>';
     leftPanel.innerHTML = html;
     
     // Добавляем обработчики для редактируемых ячеек
@@ -465,7 +465,7 @@ function updateFdAt(index, newTm) {
 }
 
 function addEmptyFd() {
-    const n = appState.originalN || 3;
+    const n = appState.originalN;
     const defaultTm = "1-2";
     const newCube = tmToCube(defaultTm, n);
     appState.originalFds.push({ tm: defaultTm, cube: newCube });
@@ -614,7 +614,7 @@ function updateUI() {
                 <td class="fd-comment">${bStr}</td>
             </tr>`;
         }
-        html += '</tbody></table>';
+        html += '</tbody>\/table>';
         rightPanel.innerHTML = html;
     } else {
         btnSaveAs.disabled = true;
@@ -627,14 +627,18 @@ function updateUI() {
 // ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
 // ============================================================
 
+const fileInput = document.getElementById('fileInput');
+
+// Обработчик выбора файла (один раз)
+fileInput.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) loadFromFile(file);
+};
+
+// Кнопка "Открыть"
 document.getElementById('btnOpen').addEventListener('click', () => {
-    const fileInput = document.getElementById('fileInput');
-    fileInput.value = '';
+    fileInput.value = '';  // сбрасываем, чтобы можно было выбрать тот же файл снова
     fileInput.click();
-    fileInput.onchange = async (e) => {
-        const file = e.target.files[0];
-        if (file) loadFromFile(file);
-    };
 });
 
 document.getElementById('btnCalculate').addEventListener('click', calculate);
