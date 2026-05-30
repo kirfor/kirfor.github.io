@@ -1,10 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-5 (редактируемая таблица исходных ФЗ)
- * 
- * Алгоритм основан на оригинальном PL/I коде (1986)
- * Правила: транзитивность и псевдотранзитивность
+ * Версия 9-6 (исправлена: работают кнопки Открыть и Добавить ФЗ)
  */
 
 // ============================================================
@@ -13,7 +10,7 @@
 let appState = {
     currentFile: null,
     originalFds: [],      // массив объектов { tm: string, cube: number }
-    originalN: null,
+    originalN: 3,         // значение по умолчанию (можно изменить при загрузке файла)
     originalKc1: null,
     closureCubes: null,
     closureResult: null,
@@ -21,7 +18,7 @@ let appState = {
 };
 
 // ============================================================
-// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ (без изменений)
+// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ
 // ============================================================
 
 function krang(val, kubl, l, n, ib, ie) {
@@ -403,7 +400,7 @@ function writeXmlResult(originalKubList, originalKc1, kubResult, ic, n) {
 
 function renderEditableTable() {
     const leftPanel = document.getElementById('leftPanel');
-    const n = appState.originalN || 1;
+    const n = appState.originalN;
     
     if (appState.originalFds.length === 0) {
         leftPanel.innerHTML = '<div class="placeholder">Нет данных. Добавьте ФЗ или откройте файл.</div>';
@@ -419,7 +416,7 @@ function renderEditableTable() {
         const bStr = cubeToStr(fd.cube, n);
         html += `<tr data-index="${i}">
             <td class="fd-number">${i + 1}</td>
-            <td class="fd-tm editable" contenteditable="true">${tmStr}</td>
+            <td class="fd-tm editable" contenteditable="true">${escapeHtml(tmStr)}</td>
             <td class="fd-comment">${bStr}</td>
         </tr>`;
     }
@@ -441,14 +438,23 @@ function renderEditableTable() {
     });
 }
 
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
 function updateFdAt(index, newTm) {
-    const n = appState.originalN || 1;
+    const n = appState.originalN;
     try {
         const newCube = tmToCube(newTm, n);
         appState.originalFds[index] = { tm: newTm, cube: newCube };
         appState.originalKc1 = appState.originalFds.length;
         appState.originalKubList = appState.originalFds.map(fd => fd.cube);
-        appState.originalKubList.push(0); // маркер конца
+        appState.originalKubList.push(0);
         appState.resultSaved = false;
         appState.closureResult = null;
         updateUI();
@@ -504,9 +510,9 @@ function calculate() {
     }
     
     const kubList = getCurrentKubList();
-    const n = appState.originalN || 3;
+    const n = appState.originalN;
     const kc1 = kubList.length;
-    kubList.push(0); // маркер конца для алгоритма
+    kubList.push(0); // маркер конца
     
     document.getElementById('statusBar').textContent = "Вычисление замыкания...";
     console.log("=== CALCULATE START ===");
@@ -531,14 +537,14 @@ function calculate() {
     }, 100);
 }
 
-function saveAsFile() {
+async function saveAsFile() {
     if (!appState.closureCubes) {
         alert("Нет результатов для сохранения. Сначала выполните расчёт.");
         return;
     }
     
     const originalKubList = getCurrentKubList();
-    const n = appState.originalN || 3;
+    const n = appState.originalN;
     const kc1 = originalKubList.length;
     const xmlContent = writeXmlResult(originalKubList, kc1, appState.closureCubes, appState.closureCubes.length, n);
     
@@ -579,7 +585,7 @@ function updateUI() {
         btnCalculate.disabled = false;
         leftPanelHeader.textContent = `📋 Исходная система ФЗ (${appState.originalFds.length})`;
         fileInfoSpan.textContent = `Файл: ${appState.currentFile?.name || 'ручной ввод'}`;
-        attrInfoSpan.textContent = `Количество атрибутов: ${appState.originalN || '?'}`;
+        attrInfoSpan.textContent = `Количество атрибутов: ${appState.originalN}`;
         renderEditableTable();
     } else {
         btnCalculate.disabled = true;
@@ -592,7 +598,7 @@ function updateUI() {
     
     if (appState.closureResult && appState.closureResult.length > 0) {
         btnSaveAs.disabled = false;
-        const n = appState.originalN || 3;
+        const n = appState.originalN;
         const orderedResult = [...appState.closureResult];
         rightPanelHeader.textContent = `🎯 Замыкание системы ФЗ (${orderedResult.length})`;
         
@@ -617,7 +623,10 @@ function updateUI() {
     }
 }
 
-// Инициализация интерфейса
+// ============================================================
+// ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА
+// ============================================================
+
 document.getElementById('btnOpen').addEventListener('click', () => {
     const fileInput = document.getElementById('fileInput');
     fileInput.value = '';
