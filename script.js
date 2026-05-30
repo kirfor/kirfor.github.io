@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-2 (веб-порт, без кнопки "Сохранить")
+ * Версия 9-3 (веб-порт, исправлено сохранение через showSaveFilePicker)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -504,39 +504,45 @@ function saveToFile(filename, content) {
     URL.revokeObjectURL(link.href);
 }
 
-function saveAsFile() {
+async function saveAsFile() {
     if (!appState.closureCubes) {
         alert("Нет результатов для сохранения. Сначала выполните расчёт.");
         return;
     }
     
-    const defaultName = appState.currentFile ? 
-        appState.currentFile.name.replace(/\.xml$/i, '_closure.xml') : 
-        'closure.xml';
+    const xmlContent = writeXmlResult(
+        appState.originalKubList,
+        appState.originalKc1,
+        appState.closureCubes,
+        appState.closureCubes.length,
+        appState.originalN
+    );
     
-    const fakeInput = document.createElement('input');
-    fakeInput.type = 'file';
-    fakeInput.style.display = 'none';
-    document.body.appendChild(fakeInput);
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
     
-    fakeInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const xmlContent = writeXmlResult(
-                appState.originalKubList,
-                appState.originalKc1,
-                appState.closureCubes,
-                appState.closureCubes.length,
-                appState.originalN
-            );
-            saveToFile(file.name, xmlContent);
-            appState.resultSaved = true;
-            updateUI();
+    // Используем showSaveFilePicker (современный API)
+    try {
+        const handle = await window.showSaveFilePicker({
+            suggestedName: appState.currentFile ? 
+                appState.currentFile.name.replace(/\.xml$/i, '_closure.xml') : 
+                'closure.xml',
+            types: [{
+                description: 'XML files',
+                accept: { 'application/xml': ['.xml'] }
+            }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        appState.resultSaved = true;
+        updateUI();
+        document.getElementById('statusBar').textContent = `Сохранено в: ${handle.name}`;
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error("Save error:", err);
+            alert("Ошибка при сохранении: " + err.message);
         }
-        document.body.removeChild(fakeInput);
-    };
-    
-    fakeInput.click();
+    }
 }
 
 function calculate() {
