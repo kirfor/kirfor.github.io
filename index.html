@@ -21,8 +21,11 @@
             <input type="file" id="fileInput" accept=".xml" style="display: none;">
         </div>
 
-        <div class="status-bar" id="statusBar">
-            Готов. Выберите файл: Открыть
+        <!-- Информационная панель -->
+        <div class="info-bar" id="infoBar">
+            <span id="fileInfo">Файл: не загружен</span>
+            <span id="attrInfo">Атрибутов (N): —</span>
+            <span id="fdsInfo">ФЗ (KC1): —</span>
         </div>
 
         <div class="panels">
@@ -38,6 +41,11 @@
                     <div class="placeholder">Нет результатов</div>
                 </div>
             </div>
+        </div>
+
+        <!-- Статусная строка внизу -->
+        <div class="status-bar" id="statusBar">
+            Готов. Выберите файл: Открыть
         </div>
     </div>
 
