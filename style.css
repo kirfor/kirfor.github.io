@@ -1,0 +1,171 @@
+/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 14px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.toolbar button {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toolbar button:hover:not(:disabled) {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+}
+
+.toolbar button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.toolbar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.status-bar {
+    background: #e9ecef;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #495057;
+    margin-bottom: 20px;
+    font-family: monospace;
+}
+
+.panels {
+    display: flex;
+    gap: 20px;
+    min-height: 500px;
+}
+
+.panel {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    background: #1a1a2e;
+    color: white;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.panel-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    background: #fafbfc;
+}
+
+.placeholder {
+    color: #adb5bd;
+    text-align: center;
+    padding: 40px;
+    font-style: italic;
+}
+
+.fd-item {
+    padding: 4px 0;
+    border-bottom: 1px solid #e9ecef;
+    font-family: monospace;
+}
+
+.fd-number {
+    display: inline-block;
+    width: 35px;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.fd-tm {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.fd-comment {
+    color: #6c757d;
+    font-size: 12px;
+    margin-left: 12px;
+}
+
+.new-fd {
+    background: #e7f5e9;
+}
+
+.error-message {
+    color: #dc3545;
+    padding: 8px;
+    background: #ffe6e6;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.success-message {
+    color: #198754;
+    padding: 8px;
+    background: #e6ffed;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.scrollable {
+    max-height: 500px;
+    overflow-y: auto;
+}

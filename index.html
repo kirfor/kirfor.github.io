@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIMPL1 - Вычисление замыкания функциональных зависимостей</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>KIMPL1 — Вычисление замыкания ФЗ</h1>
+            <p class="subtitle">Алгоритм замыкания на исходном множестве кубов (логических единиц) с правилами транзитивности и псевдотранзитивности</p>
+        </div>
+
+        <div class="toolbar">
+            <button id="btnOpen" title="Открыть XML-файл (Ctrl+O)">📂 Открыть</button>
+            <button id="btnSave" title="Сохранить результат (Ctrl+S)" disabled>💾 Сохранить</button>
+            <button id="btnSaveAs" title="Сохранить как (Ctrl+Shift+S)" disabled>📄 Сохранить как...</button>
+            <button id="btnCalculate" title="Вычислить замыкание (Ctrl+R)" disabled>⚡ Рассчитать</button>
+            <input type="file" id="fileInput" accept=".xml" style="display: none;">
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            Готов. Выберите файл: Открыть
+        </div>
+
+        <div class="panels">
+            <div class="panel left-panel">
+                <div class="panel-header">📋 Исходная система ФЗ</div>
+                <div class="panel-content" id="leftPanel">
+                    <div class="placeholder">Нет загруженных данных</div>
+                </div>
+            </div>
+            <div class="panel right-panel">
+                <div class="panel-header">🎯 Замыкание</div>
+                <div class="panel-content" id="rightPanel">
+                    <div class="placeholder">Нет результатов</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
