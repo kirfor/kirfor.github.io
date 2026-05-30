@@ -27,11 +27,6 @@ body {
     margin-bottom: 8px;
 }
 
-.subtitle {
-    color: #666;
-    font-size: 14px;
-}
-
 .toolbar {
     display: flex;
     gap: 12px;
@@ -123,9 +118,6 @@ body {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    line-height: 1.6;
     background: #fafbfc;
 }
 
@@ -136,15 +128,36 @@ body {
     font-style: italic;
 }
 
-.fd-item {
-    padding: 4px 0;
+/* Стили таблицы */
+.fds-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.fds-table th,
+.fds-table td {
+    text-align: left;
+    padding: 8px 10px;
     border-bottom: 1px solid #e9ecef;
-    font-family: monospace;
+}
+
+.fds-table th {
+    background: #e9ecef;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.fds-table tr:hover {
+    background: #f1f3f5;
 }
 
 .fd-number {
-    display: inline-block;
-    width: 35px;
+    width: 50px;
+    text-align: center;
     font-weight: 600;
     color: #1a1a2e;
 }
@@ -156,28 +169,7 @@ body {
 
 .fd-comment {
     color: #6c757d;
-    font-size: 12px;
-    margin-left: 12px;
-}
-
-.new-fd {
-    background: #e7f5e9;
-}
-
-.error-message {
-    color: #dc3545;
-    padding: 8px;
-    background: #ffe6e6;
-    border-radius: 6px;
-    margin-bottom: 8px;
-}
-
-.success-message {
-    color: #198754;
-    padding: 8px;
-    background: #e6ffed;
-    border-radius: 6px;
-    margin-bottom: 8px;
+    font-family: monospace;
 }
 
 .scrollable {

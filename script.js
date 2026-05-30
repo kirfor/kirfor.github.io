@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-7 (упрощённая информационная панель, убрана строка "Всего ФЗ")
+ * Версия 9-4 (табличный вывод)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -398,17 +398,19 @@ function writeXmlResult(originalKubList, originalKc1, kubResult, ic, n) {
 }
 
 function formatFdsList(cubes, n, startNumber = 1) {
-    let html = '';
+    let html = '<table class="fds-table">';
+    html += '<thead><tr><th>№</th><th>ТМ-форма</th><th>Битовая форма</th></tr></thead><tbody>';
     for (let i = 0; i < cubes.length; i++) {
         const cube = cubes[i];
         const tmStr = cubeToTm(cube, n);
         const bStr = cubeToStr(cube, n);
-        html += `<div class="fd-item">
-            <span class="fd-number">${startNumber + i}:</span>
-            <span class="fd-tm">${tmStr}</span>
-            <span class="fd-comment">&lt;!-- ${bStr} --&gt;</span>
-        </div>`;
+        html += `<tr>
+            <td class="fd-number">${startNumber + i}</td>
+            <td class="fd-tm">${tmStr}</td>
+            <td class="fd-comment">${bStr}</td>
+        </tr>`;
     }
+    html += '</tbody></table>';
     return html;
 }
 
@@ -597,8 +599,8 @@ function quitApp() {
 
 // Инициализация интерфейса
 document.getElementById('btnOpen').addEventListener('click', openFile);
-document.getElementById('btnSaveAs').addEventListener('click', saveAsFile);
 document.getElementById('btnCalculate').addEventListener('click', calculate);
+document.getElementById('btnSaveAs').addEventListener('click', saveAsFile);
 document.getElementById('btnQuit').addEventListener('click', quitApp);
 
 // Горячие клавиши
@@ -606,12 +608,12 @@ document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'o') {
         e.preventDefault();
         openFile();
-    } else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-        e.preventDefault();
-        saveAsFile();
     } else if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
         calculate();
+    } else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+        e.preventDefault();
+        saveAsFile();
     } else if (e.ctrlKey && e.key === 'q') {
         e.preventDefault();
         quitApp();
