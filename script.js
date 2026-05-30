@@ -1,10 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 8.2 (веб-порт)
- * 
- * Алгоритм основан на оригинальном PL/I коде (1986)
- * Правила: транзитивность и псевдотранзитивность
+ * Версия 9-1 (с диалогом выбора папки при сохранении)
  */
 
 // ============================================================
@@ -228,7 +225,7 @@ function kimpl1(kubList, n, kc1) {
                 k3_tmp = res.k3;
             }
             
-            ir = k1_tmp;      // количество активных новых кубов
+            ir = k1_tmp;
             
             if (va.length !== ic) {
                 va = new Array(ic).fill(0);
@@ -267,7 +264,6 @@ function kimpl1(kubList, n, kc1) {
             va = krangResult2.val;
             kub = krangResult2.kubl;
             
-            // Обновляем k2, k3 из второго вызова krang (сортировка VA и KUB)
             k2 = krangResult2.k2;
             k3 = krangResult2.k3;
             
@@ -279,8 +275,6 @@ function kimpl1(kubList, n, kc1) {
             cz2 = [];
             swz = 1;
             ir = 0;
-            // k2 и k3 сохраняются для следующей итерации? 
-            // В PL/I они сбрасываются в конце блока
             k2 = 1;
             k3 = 0;
         }
@@ -501,16 +495,29 @@ async function openFile() {
     };
 }
 
-function saveToFile(filename, content) {
-    const blob = new Blob([content], { type: 'application/xml' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
+async function saveToFile(filename, content) {
+    try {
+        const fileHandle = await window.showSaveFilePicker({
+            suggestedName: filename,
+            types: [{
+                description: 'XML files',
+                accept: { 'application/xml': ['.xml'] }
+            }]
+        });
+        const writable = await fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        return true;
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error("Save error:", err);
+            alert("Ошибка при сохранении: " + err.message);
+        }
+        return false;
+    }
 }
 
-function saveFile() {
+async function saveFile() {
     if (!appState.closureCubes) {
         alert("Нет результатов для сохранения. Сначала выполните расчёт.");
         return;
@@ -524,40 +531,31 @@ function saveFile() {
         appState.closureCubes.length,
         appState.originalN
     );
-    saveToFile(fileName, xmlContent);
-    appState.resultSaved = true;
-    updateUI();
+    const saved = await saveToFile(fileName, xmlContent);
+    if (saved) {
+        appState.resultSaved = true;
+        updateUI();
+    }
 }
 
-function saveAsFile() {
+async function saveAsFile() {
     if (!appState.closureCubes) {
         alert("Нет результатов для сохранения. Сначала выполните расчёт.");
         return;
     }
     
-    const fakeInput = document.createElement('input');
-    fakeInput.type = 'file';
-    fakeInput.style.display = 'none';
-    document.body.appendChild(fakeInput);
-    
-    fakeInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const xmlContent = writeXmlResult(
-                appState.originalKubList,
-                appState.originalKc1,
-                appState.closureCubes,
-                appState.closureCubes.length,
-                appState.originalN
-            );
-            saveToFile(file.name, xmlContent);
-            appState.resultSaved = true;
-            updateUI();
-        }
-        document.body.removeChild(fakeInput);
-    };
-    
-    fakeInput.click();
+    const xmlContent = writeXmlResult(
+        appState.originalKubList,
+        appState.originalKc1,
+        appState.closureCubes,
+        appState.closureCubes.length,
+        appState.originalN
+    );
+    const saved = await saveToFile('closure.xml', xmlContent);
+    if (saved) {
+        appState.resultSaved = true;
+        updateUI();
+    }
 }
 
 function calculate() {
