@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-3 (веб-порт, исправлено сохранение через showSaveFilePicker)
+ * Версия 9-4 (веб-порт, сохранение через showSaveFilePicker)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -495,15 +495,6 @@ async function openFile() {
     };
 }
 
-function saveToFile(filename, content) {
-    const blob = new Blob([content], { type: 'application/xml' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(link.href);
-}
-
 async function saveAsFile() {
     if (!appState.closureCubes) {
         alert("Нет результатов для сохранения. Сначала выполните расчёт.");
@@ -520,7 +511,6 @@ async function saveAsFile() {
     
     const blob = new Blob([xmlContent], { type: 'application/xml' });
     
-    // Используем showSaveFilePicker (современный API)
     try {
         const handle = await window.showSaveFilePicker({
             suggestedName: appState.currentFile ? 
