@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-1 (веб-порт)
+ * Версия 9-3 (интерфейс: инфо-панель вверху, статус внизу)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -418,16 +418,19 @@ function updateUI() {
     const leftPanel = document.getElementById('leftPanel');
     const rightPanel = document.getElementById('rightPanel');
     const statusBar = document.getElementById('statusBar');
+    const fileInfoSpan = document.getElementById('fileInfo');
+    const attrInfoSpan = document.getElementById('attrInfo');
+    const fdsInfoSpan = document.getElementById('fdsInfo');
     
     if (appState.originalKubList) {
         btnCalculate.disabled = false;
         btnSaveAs.disabled = false;
         
+        fileInfoSpan.textContent = `Файл: ${appState.currentFile?.name || 'загружен'}`;
+        attrInfoSpan.textContent = `Атрибутов (N): ${appState.originalN}`;
+        fdsInfoSpan.textContent = `ФЗ (KC1): ${appState.originalKc1}`;
+        
         const leftHtml = `<div class="scrollable">
-            <div class="fd-item"><strong>Файл: ${appState.currentFile?.name || 'загружен'}</strong></div>
-            <div class="fd-item"><strong>Количество атрибутов (N): ${appState.originalN}</strong></div>
-            <div class="fd-item"><strong>Количество исходных ФЗ (KC1): ${appState.originalKc1}</strong></div>
-            <div style="margin-top: 12px;"></div>
             ${formatFdsList(appState.originalKubList.slice(0, appState.originalKc1), appState.originalN, 1)}
         </div>`;
         leftPanel.innerHTML = leftHtml;
@@ -435,6 +438,9 @@ function updateUI() {
         btnCalculate.disabled = true;
         btnSaveAs.disabled = true;
         leftPanel.innerHTML = '<div class="placeholder">Нет загруженных данных</div>';
+        fileInfoSpan.textContent = 'Файл: не загружен';
+        attrInfoSpan.textContent = 'Атрибутов (N): —';
+        fdsInfoSpan.textContent = 'ФЗ (KC1): —';
     }
     
     if (appState.closureResult && appState.closureResult.length > 0) {
@@ -448,9 +454,8 @@ function updateUI() {
         const orderedResult = orderedOriginal.concat(newCubes);
         
         const rightHtml = `<div class="scrollable">
-            <div class="fd-item"><strong>Замыкание системы ФЗ</strong></div>
             <div class="fd-item"><strong>Всего ФЗ в замыкании: ${orderedResult.length}</strong></div>
-            <div style="margin-top: 12px;"></div>
+            <div style="margin-top: 8px;"></div>
             ${formatFdsList(orderedResult, appState.originalN, 1)}
         </div>`;
         rightPanel.innerHTML = rightHtml;

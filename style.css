@@ -69,13 +69,31 @@ body {
     cursor: not-allowed;
 }
 
+/* Информационная панель */
+.info-bar {
+    background: #e9ecef;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: monospace;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.info-bar span {
+    color: #495057;
+}
+
+/* Статусная строка */
 .status-bar {
     background: #e9ecef;
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 13px;
     color: #495057;
-    margin-bottom: 20px;
+    margin-top: 20px;
     font-family: monospace;
 }
 
