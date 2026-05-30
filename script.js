@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-5 (динамические заголовки панелей)
+ * Версия 9-6 (упрощённая информационная панель, убрана строка "Всего ФЗ")
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -21,7 +21,7 @@ let appState = {
 };
 
 // ============================================================
-// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ (без изменений)
+// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ
 // ============================================================
 
 function krang(val, kubl, l, n, ib, ie) {
@@ -420,7 +420,6 @@ function updateUI() {
     const statusBar = document.getElementById('statusBar');
     const fileInfoSpan = document.getElementById('fileInfo');
     const attrInfoSpan = document.getElementById('attrInfo');
-    const fdsInfoSpan = document.getElementById('fdsInfo');
     const leftPanelHeader = document.getElementById('leftPanelHeader');
     const rightPanelHeader = document.getElementById('rightPanelHeader');
     
@@ -436,8 +435,7 @@ function updateUI() {
         leftPanelHeader.textContent = `📋 Исходная система ФЗ (${appState.originalKc1})`;
         
         fileInfoSpan.textContent = `Файл: ${appState.currentFile?.name || 'загружен'}`;
-        attrInfoSpan.textContent = `Атрибутов (N): ${appState.originalN}`;
-        fdsInfoSpan.textContent = `ФЗ (KC1): ${appState.originalKc1}`;
+        attrInfoSpan.textContent = `Количество атрибутов: ${appState.originalN}`;
         
         const leftHtml = `<div class="scrollable">
             ${formatFdsList(appState.originalKubList.slice(0, appState.originalKc1), appState.originalN, 1)}
@@ -451,8 +449,7 @@ function updateUI() {
         leftPanelHeader.textContent = `📋 Исходная система ФЗ`;
         
         fileInfoSpan.textContent = 'Файл: не загружен';
-        attrInfoSpan.textContent = 'Атрибутов (N): —';
-        fdsInfoSpan.textContent = 'ФЗ (KC1): —';
+        attrInfoSpan.textContent = 'Количество атрибутов: —';
     }
     
     if (appState.closureResult && appState.closureResult.length > 0) {
@@ -468,8 +465,6 @@ function updateUI() {
         rightPanelHeader.textContent = `🎯 Замыкание системы ФЗ (${orderedResult.length})`;
         
         const rightHtml = `<div class="scrollable">
-            <div class="fd-item"><strong>Всего ФЗ в замыкании: ${orderedResult.length}</strong></div>
-            <div style="margin-top: 8px;"></div>
             ${formatFdsList(orderedResult, appState.originalN, 1)}
         </div>`;
         rightPanel.innerHTML = rightHtml;
