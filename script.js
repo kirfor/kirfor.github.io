@@ -1,11 +1,10 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-1 (с диалогом выбора папки при сохранении)
+ * Версия 9-2 (веб-порт, без кнопки "Сохранить")
  * 
- * Сохранение: 
- *   - Сохранить (Ctrl+S) -> имя_файла_closure.xml
- *   - Сохранить как (Ctrl+Shift+S) -> исходное имя_файла.xml
+ * Алгоритм основан на оригинальном PL/I коде (1986)
+ * Правила: транзитивность и псевдотранзитивность
  */
 
 // ============================================================
@@ -414,7 +413,6 @@ function formatFdsList(cubes, n, startNumber = 1) {
 }
 
 function updateUI() {
-    const btnSave = document.getElementById('btnSave');
     const btnSaveAs = document.getElementById('btnSaveAs');
     const btnCalculate = document.getElementById('btnCalculate');
     const leftPanel = document.getElementById('leftPanel');
@@ -423,7 +421,6 @@ function updateUI() {
     
     if (appState.originalKubList) {
         btnCalculate.disabled = false;
-        btnSave.disabled = false;
         btnSaveAs.disabled = false;
         
         const leftHtml = `<div class="scrollable">
@@ -436,7 +433,6 @@ function updateUI() {
         leftPanel.innerHTML = leftHtml;
     } else {
         btnCalculate.disabled = true;
-        btnSave.disabled = true;
         btnSaveAs.disabled = true;
         leftPanel.innerHTML = '<div class="placeholder">Нет загруженных данных</div>';
     }
@@ -499,71 +495,48 @@ async function openFile() {
     };
 }
 
-async function saveToFile(filename, content) {
-    try {
-        const fileHandle = await window.showSaveFilePicker({
-            suggestedName: filename,
-            types: [{
-                description: 'XML files',
-                accept: { 'application/xml': ['.xml'] }
-            }]
-        });
-        const writable = await fileHandle.createWritable();
-        await writable.write(content);
-        await writable.close();
-        return true;
-    } catch (err) {
-        if (err.name !== 'AbortError') {
-            console.error("Save error:", err);
-            alert("Ошибка при сохранении: " + err.message);
+function saveToFile(filename, content) {
+    const blob = new Blob([content], { type: 'application/xml' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
+function saveAsFile() {
+    if (!appState.closureCubes) {
+        alert("Нет результатов для сохранения. Сначала выполните расчёт.");
+        return;
+    }
+    
+    const defaultName = appState.currentFile ? 
+        appState.currentFile.name.replace(/\.xml$/i, '_closure.xml') : 
+        'closure.xml';
+    
+    const fakeInput = document.createElement('input');
+    fakeInput.type = 'file';
+    fakeInput.style.display = 'none';
+    document.body.appendChild(fakeInput);
+    
+    fakeInput.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const xmlContent = writeXmlResult(
+                appState.originalKubList,
+                appState.originalKc1,
+                appState.closureCubes,
+                appState.closureCubes.length,
+                appState.originalN
+            );
+            saveToFile(file.name, xmlContent);
+            appState.resultSaved = true;
+            updateUI();
         }
-        return false;
-    }
-}
-
-async function saveFile() {
-    if (!appState.closureCubes) {
-        alert("Нет результатов для сохранения. Сначала выполните расчёт.");
-        return;
-    }
+        document.body.removeChild(fakeInput);
+    };
     
-    // Сохранить (Ctrl+S) -> имя_файла_closure.xml
-    const baseName = appState.currentFile ? appState.currentFile.name.replace(/\.xml$/i, '') : 'closure';
-    const suggestedName = `${baseName}_closure.xml`;
-    const xmlContent = writeXmlResult(
-        appState.originalKubList,
-        appState.originalKc1,
-        appState.closureCubes,
-        appState.closureCubes.length,
-        appState.originalN
-    );
-    const saved = await saveToFile(suggestedName, xmlContent);
-    if (saved) {
-        appState.resultSaved = true;
-        updateUI();
-    }
-}
-
-async function saveAsFile() {
-    if (!appState.closureCubes) {
-        alert("Нет результатов для сохранения. Сначала выполните расчёт.");
-        return;
-    }
-    
-    // Сохранить как (Ctrl+Shift+S) -> исходное имя файла
-    const suggestedName = appState.currentFile ? appState.currentFile.name : 'closure.xml';
-    const xmlContent = writeXmlResult(
-        appState.originalKubList,
-        appState.originalKc1,
-        appState.closureCubes,
-        appState.closureCubes.length,
-        appState.originalN
-    );
-    const saved = await saveToFile(suggestedName, xmlContent);
-    if (saved) {
-        appState.resultSaved = true;
-        updateUI();
-    }
+    fakeInput.click();
 }
 
 function calculate() {
@@ -595,26 +568,44 @@ function calculate() {
     }, 100);
 }
 
+function quitApp() {
+    if (!appState.resultSaved && appState.closureCubes !== null) {
+        const answer = confirm("Результат замыкания не был сохранён.\nСохранить результат в файл?");
+        if (answer) {
+            saveAsFile();
+            setTimeout(() => {
+                if (confirm("Вы уверены, что хотите выйти?")) {
+                    window.close();
+                }
+            }, 200);
+            return;
+        }
+    }
+    if (confirm("Вы уверены, что хотите выйти?")) {
+        window.close();
+    }
+}
+
 // Инициализация интерфейса
 document.getElementById('btnOpen').addEventListener('click', openFile);
-document.getElementById('btnSave').addEventListener('click', saveFile);
 document.getElementById('btnSaveAs').addEventListener('click', saveAsFile);
 document.getElementById('btnCalculate').addEventListener('click', calculate);
+document.getElementById('btnQuit').addEventListener('click', quitApp);
 
 // Горячие клавиши
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'o') {
         e.preventDefault();
         openFile();
-    } else if (e.ctrlKey && e.key === 's' && !e.shiftKey) {
-        e.preventDefault();
-        saveFile();
     } else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
         e.preventDefault();
         saveAsFile();
     } else if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
         calculate();
+    } else if (e.ctrlKey && e.key === 'q') {
+        e.preventDefault();
+        quitApp();
     }
 });
 
