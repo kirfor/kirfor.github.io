@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-4 (веб-порт, сохранение через showSaveFilePicker)
+ * Версия 9-5 (веб-порт, сохранение с исходным именем файла)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -513,9 +513,7 @@ async function saveAsFile() {
     
     try {
         const handle = await window.showSaveFilePicker({
-            suggestedName: appState.currentFile ? 
-                appState.currentFile.name.replace(/\.xml$/i, '_closure.xml') : 
-                'closure.xml',
+            suggestedName: appState.currentFile ? appState.currentFile.name : 'closure.xml',
             types: [{
                 description: 'XML files',
                 accept: { 'application/xml': ['.xml'] }
