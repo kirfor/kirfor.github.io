@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-3 (интерфейс: инфо-панель вверху, статус внизу)
+ * Версия 9-5 (динамические заголовки панелей)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -21,7 +21,7 @@ let appState = {
 };
 
 // ============================================================
-// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ
+// АЛГОРИТМИЧЕСКАЯ ЧАСТЬ (без изменений)
 // ============================================================
 
 function krang(val, kubl, l, n, ib, ie) {
@@ -421,10 +421,19 @@ function updateUI() {
     const fileInfoSpan = document.getElementById('fileInfo');
     const attrInfoSpan = document.getElementById('attrInfo');
     const fdsInfoSpan = document.getElementById('fdsInfo');
+    const leftPanelHeader = document.getElementById('leftPanelHeader');
+    const rightPanelHeader = document.getElementById('rightPanelHeader');
     
-    if (appState.originalKubList) {
+    if (!leftPanelHeader || !rightPanelHeader) {
+        console.error("Panel headers not found!");
+        return;
+    }
+    
+    if (appState.originalKubList && appState.originalKubList.length > 0) {
         btnCalculate.disabled = false;
         btnSaveAs.disabled = false;
+        
+        leftPanelHeader.textContent = `📋 Исходная система ФЗ (${appState.originalKc1})`;
         
         fileInfoSpan.textContent = `Файл: ${appState.currentFile?.name || 'загружен'}`;
         attrInfoSpan.textContent = `Атрибутов (N): ${appState.originalN}`;
@@ -438,6 +447,9 @@ function updateUI() {
         btnCalculate.disabled = true;
         btnSaveAs.disabled = true;
         leftPanel.innerHTML = '<div class="placeholder">Нет загруженных данных</div>';
+        
+        leftPanelHeader.textContent = `📋 Исходная система ФЗ`;
+        
         fileInfoSpan.textContent = 'Файл: не загружен';
         attrInfoSpan.textContent = 'Атрибутов (N): —';
         fdsInfoSpan.textContent = 'ФЗ (KC1): —';
@@ -453,6 +465,8 @@ function updateUI() {
         const newCubes = appState.closureResult.filter(cube => !originalSet.has(cube));
         const orderedResult = orderedOriginal.concat(newCubes);
         
+        rightPanelHeader.textContent = `🎯 Замыкание системы ФЗ (${orderedResult.length})`;
+        
         const rightHtml = `<div class="scrollable">
             <div class="fd-item"><strong>Всего ФЗ в замыкании: ${orderedResult.length}</strong></div>
             <div style="margin-top: 8px;"></div>
@@ -460,6 +474,7 @@ function updateUI() {
         </div>`;
         rightPanel.innerHTML = rightHtml;
     } else {
+        rightPanelHeader.textContent = `🎯 Замыкание системы ФЗ`;
         rightPanel.innerHTML = '<div class="placeholder">Нет результатов</div>';
     }
     

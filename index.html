@@ -21,7 +21,6 @@
             <input type="file" id="fileInput" accept=".xml" style="display: none;">
         </div>
 
-        <!-- Информационная панель -->
         <div class="info-bar" id="infoBar">
             <span id="fileInfo">Файл: не загружен</span>
             <span id="attrInfo">Атрибутов (N): —</span>
@@ -30,20 +29,19 @@
 
         <div class="panels">
             <div class="panel left-panel">
-                <div class="panel-header">📋 Исходная система ФЗ</div>
+                <div class="panel-header" id="leftPanelHeader">📋 Исходная система ФЗ</div>
                 <div class="panel-content" id="leftPanel">
                     <div class="placeholder">Нет загруженных данных</div>
                 </div>
             </div>
             <div class="panel right-panel">
-                <div class="panel-header">🎯 Замыкание</div>
+                <div class="panel-header" id="rightPanelHeader">🎯 Замыкание системы ФЗ</div>
                 <div class="panel-content" id="rightPanel">
                     <div class="placeholder">Нет результатов</div>
                 </div>
             </div>
         </div>
 
-        <!-- Статусная строка внизу -->
         <div class="status-bar" id="statusBar">
             Готов. Выберите файл: Открыть
         </div>
