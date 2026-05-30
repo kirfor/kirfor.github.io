@@ -1,7 +1,7 @@
 // script.js
 /**
  * KIMPL1 - Вычисление замыкания системы функциональных зависимостей
- * Версия 9-5 (веб-порт, сохранение с исходным именем файла)
+ * Версия 9-1 (веб-порт)
  * 
  * Алгоритм основан на оригинальном PL/I коде (1986)
  * Правила: транзитивность и псевдотранзитивность
@@ -511,21 +511,13 @@ async function saveAsFile() {
     
     const blob = new Blob([xmlContent], { type: 'application/xml' });
     
-    let suggestedName = 'fds.xml';
-    if (appState.currentFile) {
-        // Убираем расширение .xml (если есть) и добавляем .xml
-        let name = appState.currentFile.name.replace(/\.xml$/i, '');
-        suggestedName = name + '.xml';
-    }
-    
     try {
         const handle = await window.showSaveFilePicker({
-            suggestedName: suggestedName,
+            suggestedName: appState.currentFile ? appState.currentFile.name : 'fds.xml',
             types: [{
                 description: 'XML files',
                 accept: { 'application/xml': ['.xml'] }
-            }],
-            excludeAcceptAllOption: true
+            }]
         });
         const writable = await handle.createWritable();
         await writable.write(blob);
